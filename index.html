@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#061522">
+  <title>J.A.R.V.I.S</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    :root{--cyan:#54ddff;--blue:#12364b;--bg:#061522;--panel:#0b2030;--muted:#8eb4c6}
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 50% 10%,#123b52 0,#061522 48%,#030a11 100%);color:#e5faff;font:16px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+    main{max-width:760px;margin:auto;padding:20px 16px 34px}
+    header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1b5069;padding:8px 0 16px}
+    .brand{letter-spacing:.18em;color:var(--cyan);font-weight:800}.status{font-size:11px;color:#68efb0;border:1px solid #287a61;padding:5px 9px;border-radius:30px}
+    .core{display:grid;place-items:center;padding:30px 0 22px;text-align:center}
+    .reactor{width:174px;height:174px;border-radius:50%;display:grid;place-items:center;border:1px solid #4adfff;box-shadow:0 0 22px #20bce855,inset 0 0 24px #20bce833;position:relative}
+    .reactor:before,.reactor:after{content:"";position:absolute;border:1px dashed #46dfff88;border-radius:50%;inset:12px;animation:spin 18s linear infinite}
+    .reactor:after{inset:27px;border-style:solid;animation-direction:reverse;animation-duration:12s}
+    .reactor span{font-size:38px;color:var(--cyan);text-shadow:0 0 18px #31cfff}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    h1{font-size:26px;letter-spacing:.22em;margin:16px 0 4px;color:#c9f6ff}
+    .sub{font-size:11px;letter-spacing:.16em;color:var(--muted)}
+    .panel{background:#0b2030dd;border:1px solid #1a5068;border-radius:17px;padding:16px;margin:12px 0;box-shadow:0 10px 35px #0003}
+    .panel h2{font-size:12px;letter-spacing:.16em;color:var(--cyan);margin:0 0 13px}
+    .row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}
+    button,select,input{font:inherit;border-radius:12px;border:1px solid #28647d;background:#102d40;color:#e8fbff;padding:12px}
+    button{cursor:pointer}button.primary{background:#0e6c8c;border-color:#4adfff;font-weight:700}
+    button:active{transform:scale(.98)}button:disabled{opacity:.5}
+    .mic{width:100%;font-size:17px;padding:16px;margin-top:10px}
+    #transcript{min-height:44px;color:#d7f7ff;line-height:1.5;overflow-wrap:anywhere}
+    #reply{color:#a9d7e8;line-height:1.55;min-height:48px}
+    .note{font-size:12px;color:#83aabd;line-height:1.5}
+    .log{font:12px ui-monospace,monospace;color:#8ec5d8;line-height:1.8;white-space:pre-wrap}
+    footer{text-align:center;color:#567f91;font-size:10px;letter-spacing:.12em;padding:18px}
+    @media(min-width:600px){main{padding-top:28px}.core{padding:40px 0 30px}}
+  </style>
+</head>
+<body>
+<main>
+  <header><div class="brand">STARK INDUSTRIES</div><div class="status" id="status">SYSTEM STANDBY</div></header>
+  <section class="core">
+    <div class="reactor"><span>✦</span></div>
+    <h1>J.A.R.V.I.S</h1>
+    <div class="sub">PERSONAL AI INTERFACE · PROTOTYPE 01</div>
+  </section>
+  <section class="panel">
+    <h2>VOICE CONSOLE</h2>
+    <label class="note" for="lang">Response voice language</label>
+    <div class="row" style="margin-top:7px">
+      <select id="lang"><option value="en-GB">English · British</option><option value="ar-EG">العربية · مصري</option></select>
+      <button id="testVoice">Test voice</button>
+    </div>
+    <button class="primary mic" id="listen">🎙 Tap to speak</button>
+    <p class="note">Speech recognition depends on browser and internet availability. Your browser will ask for microphone permission.</p>
+  </section>
+  <section class="panel">
+    <h2>YOU SAID</h2><div id="transcript">Waiting for your command…</div>
+  </section>
+  <section class="panel">
+    <h2>J.A.R.V.I.S RESPONSE</h2><div id="reply">Good day. Voice systems are ready for a local prototype test.</div>
+  </section>
+  <section class="panel">
+    <h2>SYSTEM LOG</h2><div class="log" id="log">[BOOT] Interface initialized.\n[INFO] AI connection not configured.\n[INFO] Demo command mode active.</div>
+  </section>
+  <section class="panel">
+    <h2>WHAT THIS FIRST BUILD CAN DO</h2>
+    <p class="note">This starter can capture speech and speak a few demonstration responses. It is not connected to an AI service yet, so it cannot answer arbitrary questions, translate every language, or execute phone actions at this stage. We'll add those capabilities in later steps.</p>
+  </section>
+  <footer>J.A.R.V.I.S · PROTOTYPE 01 · LOCAL STARTER</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const log=(s)=>{$('log').textContent=`[${new Date().toLocaleTimeString()}] ${s}\n`+$('log').textContent;};
+function speak(text){
+  if(!('speechSynthesis' in window)){ $('reply').textContent=text; return; }
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text); u.lang=$('lang').value;
+  speechSynthesis.speak(u); $('reply').textContent=text;
+}
+function demo(text){
+  const t=text.toLowerCase();
+  if(t.includes('hello')||t.includes('مرحبا')||t.includes('ازيك')||t.includes('إزيك')) return $('lang').value==='ar-EG'?'أهلاً بحضرتك. أنا جارڤيس، كيف يمكنني مساعدتك؟':'Hello. J.A.R.V.I.S at your service.';
+  if(t.includes('time')||t.includes('الساعة')) return $('lang').value==='ar-EG'?'الوقت الآن '+new Date().toLocaleTimeString('ar-EG'):'The current time is '+new Date().toLocaleTimeString('en-GB');
+  if(t.includes('date')||t.includes('التاريخ')) return $('lang').value==='ar-EG'?'تاريخ اليوم '+new Date().toLocaleDateString('ar-EG'):'Today is '+new Date().toLocaleDateString('en-GB');
+  return $('lang').value==='ar-EG'?'استقبلت كلامك. في المرحلة القادمة سنوصلني بذكاء اصطناعي حتى أقدر أجاوب على أسئلتك.':'I received your message. In the next stage, we will connect an AI brain so I can answer your questions.';
+}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+$('listen').onclick=()=>{
+  if(!SR){speak('Speech recognition is not supported in this browser. Try Chrome.');log('Speech recognition unavailable.');return;}
+  const r=new SR(); r.lang=$('lang').value; r.interimResults=false; r.maxAlternatives=1;
+  $('status').textContent='LISTENING'; $('listen').disabled=true;
+  r.onresult=e=>{const text=e.results[0][0].transcript;$('transcript').textContent=text;log('Speech received.');speak(demo(text));};
+  r.onerror=e=>{log('Speech error: '+e.error);$('reply').textContent='I could not hear that clearly. Please try again.';};
+  r.onend=()=>{$('status').textContent='SYSTEM STANDBY';$('listen').disabled=false;};
+  r.start();
+};
+$('testVoice').onclick=()=>speak($('lang').value==='ar-EG'?'أهلاً، أنا جارڤيس.':'Hello. I am J.A.R.V.I.S.');
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body></html>
