@@ -1,0 +1,9 @@
+{
+  "name": "J.A.R.V.I.S Personal Assistant",
+  "short_name": "J.A.R.V.I.S",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#061522",
+  "theme_color": "#061522",
+  "description": "A personal AI assistant prototype"
+}
